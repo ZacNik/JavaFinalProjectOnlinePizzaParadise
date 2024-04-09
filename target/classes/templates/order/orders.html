@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Your Order</title>
+</head>
+<body>
+
+    <h1>Place Your Order</h1>
+
+    <form th:action="@{/order/submitOrder}" method="post" th:object="${pizzaOrderForm}">
+    
+
+        <label for="pizza">Select Pizza:</label>
+        
+        <select th:field="*{pizzaId}">
+            <option th:each="pizza : ${pizzas}" th:value="${pizza.pizzaID}" th:text="${pizza.display}"></option>
+        </select>
+        <input type="number" th:value="*{quantity}" name="quantity"></input>
+		
+		<p id="pizzaPrice">Pizza Price: $0.00</p>
+    
+        <button type="submit">Submit Order</button>
+    </form>
+	<script th:inline="javascript">
+    function updatePrice() {
+        var pizzaId = document.getElementById("pizzaId").value;
+        
+        // Fetch the pizza price from the server
+        fetch('/api/pizza/price/' + pizzaId)
+            .then(response => response.json())
+            .then(data => {
+                var pizzaPrice = data.price;
+                document.getElementById("pizzaPrice").innerText = "Pizza Price: $" + pizzaPrice.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error fetching pizza price:', error);
+            });
+    }
+</script>
+
+</body>
+</html>
